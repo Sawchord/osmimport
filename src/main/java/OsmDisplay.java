@@ -4,17 +4,14 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.*;
 import org.jfree.chart.plot.*;
-import org.jfree.data.category.*;
 
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 public class OsmDisplay extends ApplicationFrame{
 
-    public OsmDisplay(OsmNodeMap map) {
+    public OsmDisplay(OsmMap map) {
         super ("Display");
 
         //ArrayList<DefaultCategoryDataset> data;

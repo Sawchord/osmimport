@@ -7,7 +7,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 public class OsmXmlHandler extends DefaultHandler{
 
-    private OsmNodeMap map;
+    private OsmMap map;
 
 
     // TODO: Use enum here
@@ -27,7 +27,7 @@ public class OsmXmlHandler extends DefaultHandler{
     }
 
     public void Init(Function<Map<String, String>, Boolean> filter) {
-        map = new OsmNodeMap();
+        map = new OsmMap();
         wantedNodes = new HashMap<Long, List<OsmWay>>();
         this.filter = filter;
     }
@@ -36,7 +36,7 @@ public class OsmXmlHandler extends DefaultHandler{
         wantedNodes = null;
     }
 
-    public OsmNodeMap getMap() {
+    public OsmMap getMap() {
         return map;
     }
 
@@ -117,7 +117,7 @@ public class OsmXmlHandler extends DefaultHandler{
                     currentNode.setAtt(key, value);
                 }
                 else {
-                    currentWay.setAtt(key, value);
+                    currentWay.setAttribute(key, value);
                 }
 
                 return;
@@ -163,7 +163,7 @@ public class OsmXmlHandler extends DefaultHandler{
                 if (state != 2) {
                     throw new SAXException("Currupt OSM in Way end");
                 }
-                if (this.filter.apply(currentWay.getAttrs())) {
+                if (this.filter.apply(currentWay.getAttributes())) {
                     map.addWay(currentWay);
                 }
 

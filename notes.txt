@@ -1,8 +1,8 @@
 TODO:
 
-Export OsmWay and OsmNode into their own classes
-Implement Hashmap of Nodes in OsmWay
+[DONE] Export OsmWay and OsmNode into their own classes
+[DONE] Implement Hashmap of Nodes in OsmWay
 
-Implement WayIterator
-Implement NodeIterator
-Implement SetOfAttributes
+[FIXME] Implement WayIterator
+[PLANNED] Implement NodeIterator
+[DONE] Implement SetOfAttributes

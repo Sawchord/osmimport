@@ -21,8 +21,10 @@ public class OsmWay {
     public String getAttribute(String key) {
         return this.attribute.get(key);
     }
-    public Map<String, String> getAttrs() { return this.attribute; }
-    public void setAtt(String key, String value) {
+    public Map<String, String> getAttributes() {
+        return this.attribute;
+    }
+    public void setAttribute(String key, String value) {
         this.attribute.put(key, value);
     }
 
