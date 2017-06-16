@@ -1,6 +1,8 @@
 import java.util.Iterator;
 import java.util.function.Consumer;
 
+
+// TODO: This is a stub and not yet implemented
 public class OsmNodeIterator implements Iterator<OsmNode> {
 
     @Override

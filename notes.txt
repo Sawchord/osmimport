@@ -3,6 +3,10 @@ TODO:
 [DONE] Export OsmWay and OsmNode into their own classes
 [DONE] Implement Hashmap of Nodes in OsmWay
 
-[FIXME] Implement WayIterator
+[DONE] Implement WayIterator
 [PLANNED] Implement NodeIterator
 [DONE] Implement SetOfAttributes
+
+[PLANNED] Method for a way to find out its an area
+[PLANNED] Method to find all connected nodes and ways
+[PLANNED] Method to find nodes contained in area

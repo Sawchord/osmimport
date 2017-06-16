@@ -21,7 +21,7 @@ public class OsmDisplay extends ApplicationFrame{
 
         for (Map.Entry<Long, OsmWay> entry: map.getWays().entrySet()) {
 
-            XYSeries data = new XYSeries("Blob");
+            XYSeries data = new XYSeries("");
 
             for (int i = 0; i < entry.getValue().getNodes().size(); i++) {
                 data.add(entry.getValue().getNodes().get(i).getLon(),
@@ -48,6 +48,7 @@ public class OsmDisplay extends ApplicationFrame{
 
         ChartPanel panel = new ChartPanel(chart);
         panel.setPreferredSize(new java.awt.Dimension(800,600));
+        this.setSize(800, 600);
         setContentPane(panel);
 
 

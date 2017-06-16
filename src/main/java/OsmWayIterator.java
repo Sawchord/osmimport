@@ -5,13 +5,17 @@ import java.util.function.Function;
 
 public class OsmWayIterator implements Iterator<OsmWay> {
 
-    //private Map<Long, OsmWay> map;
     private Iterator<Map.Entry<Long, OsmWay>> it;
     private Function<Map<String, String>, Boolean> filter;
+
+    private Map.Entry<Long, OsmWay> current;
+    boolean current_active;
 
     public OsmWayIterator(Map<Long, OsmWay> map) {
         this.it = map.entrySet().iterator();
         this.filter = x -> true;
+
+        this.current_active = false;
     }
 
     public void SetFilter(Function<Map<String, String>, Boolean> filter) {
@@ -23,21 +27,32 @@ public class OsmWayIterator implements Iterator<OsmWay> {
         it.remove();
     }
 
-
     @Override
     public boolean hasNext() {
 
         if (!it.hasNext()) return false;
-        Map.Entry<Long, OsmWay> next;
-        do {
-            next = it.next();
-        } while (it.hasNext() && !filter.apply(next.getValue().getAttributes()));
 
+
+        while (it.hasNext()) {
+
+            current = it.next();
+            current_active = true;
+
+            if  (filter.apply(current.getValue().getAttributes())) {
+                break;
+            }
+        }
         return it.hasNext();
     }
 
     @Override
     public OsmWay next() {
+
+        if (current_active) {
+            current_active = false;
+            return current.getValue();
+        }
+
         Map.Entry<Long, OsmWay> next = it.next();
 
         while (!filter.apply(next.getValue().getAttributes())) {
