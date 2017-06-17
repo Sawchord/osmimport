@@ -20,13 +20,13 @@ public class OsmXmlHandler extends DefaultHandler{
     private OsmNode currentNode;
     private OsmWay currentWay;
 
-    private Function<Map<String, String>, Boolean> filter;
+    private Function<OsmWay, Boolean> filter;
 
     public void setPass(int pass) {
         this.pass = pass;
     }
 
-    public void Init(Function<Map<String, String>, Boolean> filter) {
+    public void Init(Function<OsmWay, Boolean> filter) {
         map = new OsmMap();
         wantedNodes = new HashMap<Long, List<OsmWay>>();
         this.filter = filter;
@@ -53,7 +53,7 @@ public class OsmXmlHandler extends DefaultHandler{
                 if (pass != 1) return;
 
                 if (state != 0) {
-                    throw new SAXException("Corrupt OSM File in Pass 0");
+                    throw new SAXException("Unexpected statement in pass0 ");
                 }
 
                 long id = Long.parseLong(attributes.getValue("id"));
@@ -69,7 +69,7 @@ public class OsmXmlHandler extends DefaultHandler{
                 if (pass != 0) return;
 
                 if (state != 0) {
-                    throw new SAXException("Corrupt OSM File in Pass 1");
+                    throw new SAXException("Unexpected statement in pass1");
                 }
 
                 id = Long.parseLong(attributes.getValue("id"));
@@ -82,33 +82,36 @@ public class OsmXmlHandler extends DefaultHandler{
                 if (pass != 0) return;
 
                 if (state != 2) {
-                    throw new SAXException("Corrupt OSM File in nd Value");
+                    throw new SAXException("Unexpected <nd>");
                 }
 
                 long nodeId = Long.parseLong(attributes.getValue("ref"));
-                currentWay.addNode(new OsmNode(nodeId, Double.NaN, Double.NaN));
 
-
-                // Check if we have seen ways wanting the position of that node
-                // If not create new list, if yes just append
-                List<OsmWay> wantedList = wantedNodes.get(nodeId);
-                if (wantedNodes.get(nodeId) == null) {
-                    wantedList = new ArrayList<OsmWay>();
-                    wantedList.add(currentWay);
-                    wantedNodes.put(nodeId, wantedList);
+                if (currentWay.getNodes().size() != 0
+                        && currentWay.getNodes().get(0).getId() == nodeId) {
+                    currentWay.addNode(currentWay.getNodes().get(0));
                 }
                 else {
-                    wantedList.add(currentWay);
-                }
+                    currentWay.addNode(new OsmNode(nodeId, Double.NaN, Double.NaN));
 
+
+                    // Check if we have seen ways wanting the position of that node
+                    // If not create new list, if yes just append
+                    List<OsmWay> wantedList = wantedNodes.get(nodeId);
+                    if (wantedNodes.get(nodeId) == null) {
+                        wantedList = new ArrayList<OsmWay>();
+                        wantedList.add(currentWay);
+                        wantedNodes.put(nodeId, wantedList);
+                    } else {
+                        wantedList.add(currentWay);
+                    }
+                }
                 return;
 
 
             case "tag":
 
                 if (!((pass == 0 && state == 2) || (pass == 1 && state == 1))) return;
-
-
 
                 String key = attributes.getValue("k");
                 String value = attributes.getValue("v");
@@ -121,7 +124,6 @@ public class OsmXmlHandler extends DefaultHandler{
                 }
 
                 return;
-
         }
     }
 
@@ -133,21 +135,19 @@ public class OsmXmlHandler extends DefaultHandler{
                 if (pass != 1) return;
 
                 if (state != 1) {
-                    throw new SAXException("Currupt OSM in Node end");
+                    throw new SAXException("Unexpected </node>");
                 }
 
                 long nodeId = currentNode.getId();
                 List<OsmWay> wantedList = wantedNodes.get(nodeId);
-                if (wantedList == null) {
-                    currentNode = null;
-                }
-                else {
+                if (wantedList != null) {
                     double lon = currentNode.getLon();
                     double lat = currentNode.getLat();
 
                     for (OsmWay w : wantedList) {
                         for (OsmNode n : w.getNodes()) {
                             if (n.getId() == currentNode.getId()) {
+                                // TODO: Node attributes are lost this way
                                 n.setLon(currentNode.getLon());
                                 n.setLat(currentNode.getLat());
                             }
@@ -155,15 +155,17 @@ public class OsmXmlHandler extends DefaultHandler{
                     }
                 }
 
+                currentNode = null;
                 state = 0;
                 return;
+
             case "way":
                 if (pass != 0) return;
 
                 if (state != 2) {
-                    throw new SAXException("Currupt OSM in Way end");
+                    throw new SAXException("Unexpected </way>");
                 }
-                if (this.filter.apply(currentWay.getAttributes())) {
+                if (this.filter.apply(currentWay)) {
                     map.addWay(currentWay);
                 }
 

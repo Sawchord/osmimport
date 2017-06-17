@@ -1,5 +1,7 @@
 import org.jfree.ui.RefineryUtilities;
 
+import java.util.Set;
+
 public class OsmImport {
 
     public static void main (String [] args) {
@@ -8,13 +10,29 @@ public class OsmImport {
         OsmMap map;
 
         map = OsmMap.importXml(args[0]);
-        System.out.println("Parsed " + map.getWays().size() + " ways");
+        System.out.println("Parsed " + map.getNumberOfWays() + " ways");
         System.out.println("Possible Types of Highway are : " + map.getWayAttributeSet("highway"));
 
-        map = map.filter(x -> {
-            String hw = x.get("highway");
 
+        Set<OsmWay> oh =  map.getWaysByAttribute("name", "Opernhaus");
+        if (oh != null){
+            System.out.println("Opernhaus");
+        }
+
+        map = map.filter(x -> {
+            String hw;
+            hw = x.getAttribute("name");
+            if (hw != null && hw.equals("Opernhaus")) return true;
+
+            hw = x.getAttribute("roof:angle");
+            if (hw != null && hw.equals("20")) return true;
+
+            //hw = x.get("building");
+            //if (hw != null && hw.equals("yes")) return true;
+
+            hw = x.getAttribute("highway");
             if (hw == null) return false;
+
             if (hw.equals("unclassified")
                     || hw.equals("abandoned")
                     || hw.equals("track")
@@ -35,8 +53,7 @@ public class OsmImport {
 
         //System.out.println("Possible Types of Highway : " + map.getWayAttributeSet("highway"));
         //System.out.println("Possible Names of Highway are : " + map.getWayAttributeSet("name"));
-        System.out.println("After filtering " + map.getWays().size() + " ways remain");
-
+        System.out.println("After filtering " + map.getNumberOfWays() + " ways remain");
 
         OsmDisplay display = new OsmDisplay(map);
         RefineryUtilities.centerFrameOnScreen(display);

@@ -31,4 +31,8 @@ public class OsmWay {
     void addNode(OsmNode node) {
         this.nodes.add(node);
     }
+
+    public boolean isArea() {
+        return nodes.get(0).getId() == nodes.get(nodes.size()-1).getId();
+    }
 }

@@ -14,19 +14,26 @@ public class OsmDisplay extends ApplicationFrame{
     public OsmDisplay(OsmMap map) {
         super ("Display");
 
-        //ArrayList<DefaultCategoryDataset> data;
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         int series = 0;
 
-        for (Map.Entry<Long, OsmWay> entry: map.getWays().entrySet()) {
+        //for (Map.Entry<Long, OsmWay> entry: map.getWays().entrySet()) {
+        for (OsmWay entry: map) {
 
-            XYSeries data = new XYSeries("");
+            XYSeries data = new XYSeries("Some Key");
 
-            for (int i = 0; i < entry.getValue().getNodes().size(); i++) {
-                data.add(entry.getValue().getNodes().get(i).getLon(),
-                        entry.getValue().getNodes().get(i).getLat()
+            for (int i = 0; i < entry.getNodes().size(); i++) {
+                data.add(entry.getNodes().get(i).getLon(),
+                        entry.getNodes().get(i).getLat()
                         );
+            }
+
+            // Areas need to be completed by pointing back to the first point
+            if (entry.isArea()) {
+                data.add(entry.getNodes().get(0).getLon(),
+                        entry.getNodes().get(0).getLat()
+                );
             }
 
             dataset.addSeries(data);

@@ -21,13 +21,14 @@ public class OsmMap implements Iterable<OsmWay> {
 
     public void addWay(OsmWay way) {
         this.wayMap.put(way.getId(), way);
+
         // Add all the nodes into the map to be easily accesible
         for (OsmNode n: way.getNodes()) {
             this.nodeMap.put(n.getId(), n);
         }
     }
 
-    public OsmMap filter(Function<Map<String, String>, Boolean> filter) {
+    public OsmMap filter(Function<OsmWay, Boolean> filter) {
         OsmMap new_map = new OsmMap();
         OsmWayIterator it = this.iterator();
         it.SetFilter(filter);
@@ -60,16 +61,31 @@ public class OsmMap implements Iterable<OsmWay> {
         return set;
     }
 
-    // TODO:  Make this function obsolete and then remove it
-    public Map<Long, OsmWay> getWays() {
-        return this.wayMap;
+    public Set<OsmWay> getWaysByAttribute(String key, String value) {
+
+        Set<OsmWay> set = new HashSet<>();
+        for (OsmWay w: this) {
+            if (w.getAttribute(key) != null && w.getAttribute(key).equals(value)) {
+                set.add(w);
+            }
+
+        }
+        return set;
+    }
+
+    public long getNumberOfWays() {
+        return this.wayMap.size();
+    }
+
+    public long getNumberOfNodes() {
+        return this.nodeMap.size();
     }
 
     public static OsmMap importXml(String path) {
         return importXml(path, a -> true);
     }
 
-    public static OsmMap importXml(String path, Function<Map<String, String>, Boolean> filter) {
+    public static OsmMap importXml(String path, Function<OsmWay, Boolean> filter) {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
 

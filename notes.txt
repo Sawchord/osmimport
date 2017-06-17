@@ -7,6 +7,12 @@ TODO:
 [PLANNED] Implement NodeIterator
 [DONE] Implement SetOfAttributes
 
-[PLANNED] Method for a way to find out its an area
+[DONE] Method for a way to find out its an area
+    --> [PLANNED] Get Area of the area
+
+[TODO] Change filter function to use the whole way
+
+
+[PLANNED] Method to get distance between two points
 [PLANNED] Method to find all connected nodes and ways
 [PLANNED] Method to find nodes contained in area
